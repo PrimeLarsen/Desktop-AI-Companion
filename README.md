@@ -1,6 +1,6 @@
 # Desktop AI Companion
 
-A modern desktop overlay AI assistant - like Clippy, but actually useful! This application creates a friendly robot companion that stays on top of your desktop, ready to answer your questions using Claude AI.
+A modern desktop overlay AI assistant - like Clippy, but actually useful! This application creates a friendly robot companion that stays on top of your desktop, ready to answer your questions using Google Gemini AI.
 
 ![Python](https://img.shields.io/badge/python-3.8+-blue.svg)
 ![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Mac%20%7C%20Linux-lightgrey.svg)
@@ -12,7 +12,7 @@ A modern desktop overlay AI assistant - like Clippy, but actually useful! This a
 - **Draggable interface** - Position your companion anywhere on screen
 - **Animated robot character** - Cute robot mascot with expressive eyes
 - **Multiple states** - Visual feedback for idle, listening, thinking, and speaking
-- **Claude AI integration** - Powered by Anthropic's Claude API
+- **Gemini AI integration** - Powered by Google's Gemini API
 - **Clean, modern UI** - Minimal, distraction-free design
 - **Conversation memory** - Maintains context within your session
 
@@ -34,7 +34,7 @@ The companion features:
 
 - Python 3.8 or higher
 - Windows, macOS, or Linux
-- Anthropic API key (get one at [console.anthropic.com](https://console.anthropic.com/settings/keys))
+- Google API key (get one at [Google AI Studio](https://aistudio.google.com/app/apikey))
 
 ## Installation
 
@@ -67,7 +67,7 @@ pip install -r requirements.txt
 
 ### Step 4: Set Up Your API Key
 
-1. Get your Anthropic API key from [https://console.anthropic.com/settings/keys](https://console.anthropic.com/settings/keys)
+1. Get your Google API key from [https://aistudio.google.com/app/apikey](https://aistudio.google.com/app/apikey)
 
 2. Copy the example environment file:
    ```bash
@@ -76,7 +76,7 @@ pip install -r requirements.txt
 
 3. Edit `.env` and add your API key:
    ```
-   ANTHROPIC_API_KEY=your_actual_api_key_here
+   GOOGLE_API_KEY=your_actual_api_key_here
    ```
 
 ## Usage
@@ -133,20 +133,16 @@ window_height = 550
 
 ### Changing AI Model
 
-In `desktop_companion.py`, in the `process_message` method:
+In `desktop_companion.py`, in the `__init__` method, change the model initialization:
 
 ```python
-response = self.client.messages.create(
-    model="claude-3-5-sonnet-20241022",  # Change this to another Claude model
-    max_tokens=1024,
-    messages=self.conversation_history
-)
+self.model = genai.GenerativeModel('gemini-pro')  # Change to another Gemini model
 ```
 
 Available models:
-- `claude-3-5-sonnet-20241022` (recommended - best balance)
-- `claude-3-opus-20240229` (most capable)
-- `claude-3-haiku-20240307` (fastest, most economical)
+- `gemini-pro` (recommended - best balance of speed and capability)
+- `gemini-1.5-pro` (most capable, supports longer context)
+- `gemini-1.5-flash` (fastest, most economical)
 
 ## Architecture
 
@@ -163,14 +159,14 @@ Available models:
   - Draggable window implementation
   - Message handling and display
 
-- **Claude API Integration** - Asynchronous API communication
-  - Conversation history management
+- **Gemini API Integration** - Asynchronous API communication
+  - Conversation history management via chat sessions
   - Threaded API calls to prevent UI freezing
   - Error handling
 
 ## Troubleshooting
 
-### "ANTHROPIC_API_KEY not found in environment"
+### "GOOGLE_API_KEY not found in environment"
 - Make sure you created the `.env` file (not `.env.example`)
 - Verify your API key is correctly pasted
 - Ensure there are no quotes around the API key in `.env`
@@ -222,14 +218,14 @@ MIT License - feel free to use this project however you'd like!
 ## Credits
 
 - Built with Python and Tkinter
-- Powered by [Anthropic's Claude API](https://www.anthropic.com/claude)
+- Powered by [Google's Gemini API](https://ai.google.dev/)
 - Inspired by the classic Microsoft Clippy
 
 ## Support
 
 If you encounter any issues or have questions:
 1. Check the Troubleshooting section above
-2. Review the [Anthropic API documentation](https://docs.anthropic.com/)
+2. Review the [Google AI documentation](https://ai.google.dev/docs)
 3. Open an issue on GitHub
 
 ---

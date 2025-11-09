@@ -8,7 +8,7 @@ from tkinter import scrolledtext, messagebox
 import threading
 import time
 import random
-from anthropic import Anthropic
+import google.generativeai as genai
 import os
 from dotenv import load_dotenv
 
@@ -157,18 +157,20 @@ class DesktopCompanion:
         # Make window draggable
         self.setup_draggable()
 
-        # Initialize Claude API
+        # Initialize Gemini API
         try:
-            api_key = os.getenv('ANTHROPIC_API_KEY')
+            api_key = os.getenv('GOOGLE_API_KEY')
             if not api_key:
-                raise ValueError("ANTHROPIC_API_KEY not found in environment")
-            self.client = Anthropic(api_key=api_key)
-            self.conversation_history = []
+                raise ValueError("GOOGLE_API_KEY not found in environment")
+            genai.configure(api_key=api_key)
+            self.model = genai.GenerativeModel('gemini-pro')
+            self.chat = self.model.start_chat(history=[])
+            self.api_initialized = True
         except Exception as e:
             messagebox.showerror("API Key Error",
-                               f"Failed to initialize Claude API:\n{str(e)}\n\n"
-                               "Please create a .env file with your ANTHROPIC_API_KEY")
-            self.client = None
+                               f"Failed to initialize Gemini API:\n{str(e)}\n\n"
+                               "Please create a .env file with your GOOGLE_API_KEY")
+            self.api_initialized = False
 
         # Create UI
         self.create_ui()
@@ -296,14 +298,14 @@ class DesktopCompanion:
             return 'break'  # Prevent default Enter behavior
 
     def send_message(self):
-        """Send message to Claude API"""
+        """Send message to Gemini API"""
         message = self.input_text.get("1.0", tk.END).strip()
 
         if not message:
             return
 
-        if not self.client:
-            messagebox.showerror("Error", "Claude API not initialized. Please check your API key.")
+        if not self.api_initialized:
+            messagebox.showerror("Error", "Gemini API not initialized. Please check your API key.")
             return
 
         # Clear input
@@ -314,38 +316,25 @@ class DesktopCompanion:
         self.status_label.config(text="Listening...")
         self.send_button.config(state=tk.DISABLED)
 
-        # Add user message to conversation
-        self.conversation_history.append({
-            "role": "user",
-            "content": message
-        })
+        # Store message for processing
+        self.current_message = message
 
         # Process in separate thread
         thread = threading.Thread(target=self.process_message, daemon=True)
         thread.start()
 
     def process_message(self):
-        """Process message with Claude API"""
+        """Process message with Gemini API"""
         try:
             # Update to thinking state
             self.root.after(0, lambda: self.robot.set_state(RobotCharacter.THINKING))
             self.root.after(0, lambda: self.status_label.config(text="Thinking..."))
 
-            # Call Claude API
-            response = self.client.messages.create(
-                model="claude-3-5-sonnet-20241022",
-                max_tokens=1024,
-                messages=self.conversation_history
-            )
+            # Call Gemini API
+            response = self.chat.send_message(self.current_message)
 
             # Extract response text
-            response_text = response.content[0].text
-
-            # Add assistant response to conversation
-            self.conversation_history.append({
-                "role": "assistant",
-                "content": response_text
-            })
+            response_text = response.text
 
             # Update UI with response
             self.root.after(0, lambda: self.display_response(response_text))
@@ -353,9 +342,6 @@ class DesktopCompanion:
         except Exception as e:
             error_msg = f"Error: {str(e)}"
             self.root.after(0, lambda: self.display_response(error_msg))
-            # Remove the user message if request failed
-            if self.conversation_history and self.conversation_history[-1]["role"] == "user":
-                self.conversation_history.pop()
 
     def display_response(self, text):
         """Display response in the text area"""

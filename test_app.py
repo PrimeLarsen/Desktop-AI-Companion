@@ -20,10 +20,10 @@ print()
 # Test 2: Check required modules
 print("✓ Test 2: Required Modules")
 try:
-    from anthropic import Anthropic
-    print("  ✓ anthropic module imported successfully")
+    import google.generativeai as genai
+    print("  ✓ google.generativeai module imported successfully")
 except ImportError as e:
-    print(f"  ✗ Failed to import anthropic: {e}")
+    print(f"  ✗ Failed to import google.generativeai: {e}")
 
 try:
     from dotenv import load_dotenv
@@ -37,14 +37,14 @@ print("✓ Test 3: Environment Configuration")
 if os.path.exists('.env'):
     print("  ✓ .env file found")
     load_dotenv()
-    if os.getenv('ANTHROPIC_API_KEY'):
-        api_key = os.getenv('ANTHROPIC_API_KEY')
-        if api_key.startswith('sk-'):
+    if os.getenv('GOOGLE_API_KEY'):
+        api_key = os.getenv('GOOGLE_API_KEY')
+        if api_key.startswith('AIza'):
             print("  ✓ API key format looks valid")
         else:
             print("  ⚠ API key found but may be a placeholder")
     else:
-        print("  ✗ ANTHROPIC_API_KEY not found in .env")
+        print("  ✗ GOOGLE_API_KEY not found in .env")
 else:
     print("  ✗ .env file not found")
 print()
@@ -63,7 +63,7 @@ try:
         ('RobotCharacter class', 'class RobotCharacter'),
         ('DesktopCompanion class', 'class DesktopCompanion'),
         ('Eye states', 'IDLE = "idle"'),
-        ('Claude API integration', 'self.client = Anthropic'),
+        ('Gemini API integration', 'genai.GenerativeModel'),
         ('Main entry point', 'def main()'),
     ]
 

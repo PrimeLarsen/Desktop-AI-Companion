@@ -45,7 +45,7 @@ A friendly blue robot appears at the top, featuring:
 ```
 - Pupils look upward
 - "Hmm, let me think" expression
-- Shows while waiting for Claude API response
+- Shows while waiting for Gemini API response
 
 #### Speaking State (Showing response)
 ```
@@ -149,7 +149,7 @@ A friendly blue robot appears at the top, featuring:
 
 **Invalid API Key:**
 - Error dialog appears on startup
-- Message: "Failed to initialize Claude API"
+- Message: "Failed to initialize Gemini API"
 - Instructions to check .env file
 
 **API Errors:**
@@ -174,7 +174,7 @@ A friendly blue robot appears at the top, featuring:
 - UI appears instantly (<100ms)
 - Blink animation: 150ms
 - State transitions: <50ms
-- API response: 1-5 seconds (depends on Claude)
+- API response: 1-5 seconds (depends on Gemini)
 
 ## Screenshot Representation
 
